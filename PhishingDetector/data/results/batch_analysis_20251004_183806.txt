@@ -1,0 +1,55 @@
+﻿══════════════════════════════════════════════════════
+  📊 BATCH ANALYSIS SUMMARY
+══════════════════════════════════════════════════════
+
+📧 Total Emails: 10
+🚨 Phishing: 10 (100,0%)
+✅ Legitimate: 0 (0,0%)
+📊 Average Threat Score: 9,67/10
+⚠️  High Risk (>7): 10
+⏱️  Total Time: 90ms
+
+──────────────────────────────────────────────────────
+DETAILED RESULTS:
+──────────────────────────────────────────────────────
+
+🔴 sample-370.eml - 🚨 PHISHING
+   Score: 9,5/10 | Confidence: 90%
+   Risks: ⚠️ Money/prize-related content, ⚠️ Missing professional signature
+
+🔴 sample-371.eml - 🚨 PHISHING
+   Score: 9,2/10 | Confidence: 77%
+   Risks: ⚠️ Suspicious URL detected, ⚠️ Multiple URLs (7), ⚠️ Missing professional signature
+
+🔴 sample-372.eml - 🚨 PHISHING
+   Score: 10,0/10 | Confidence: 90%
+   Risks: ⚠️ Threatening language (account suspension/closure), ⚠️ Money/prize-related content
+
+🔴 sample-373.eml - 🚨 PHISHING
+   Score: 9,2/10 | Confidence: 77%
+   Risks: ⚠️ Suspicious URL detected, ⚠️ Multiple URLs (7), ⚠️ Missing professional signature
+
+🔴 sample-374.eml - 🚨 PHISHING
+   Score: 9,5/10 | Confidence: 90%
+   Risks: ⚠️ Money/prize-related content, ⚠️ Missing professional signature
+
+🔴 sample-375.eml - 🚨 PHISHING
+   Score: 10,0/10 | Confidence: 89%
+   Risks: 4 factors detected
+
+🔴 sample-376.eml - 🚨 PHISHING
+   Score: 10,0/10 | Confidence: 89%
+   Risks: 6 factors detected
+
+🔴 sample-377.eml - 🚨 PHISHING
+   Score: 10,0/10 | Confidence: 79%
+   Risks: 5 factors detected
+
+🔴 sample-378.eml - 🚨 PHISHING
+   Score: 10,0/10 | Confidence: 91%
+   Risks: 🚨 Requests personal information, ⚠️ Money/prize-related content
+
+🔴 sample-379.eml - 🚨 PHISHING
+   Score: 9,3/10 | Confidence: 78%
+   Risks: ⚠️ Suspicious URL detected, ⚠️ Multiple URLs (6)
+
