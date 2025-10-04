@@ -1,0 +1,35 @@
+﻿══════════════════════════════════════════════════════
+  📊 BATCH ANALYSIS SUMMARY
+══════════════════════════════════════════════════════
+
+📧 Total Emails: 5
+🚨 Phishing: 5 (100,0%)
+✅ Legitimate: 0 (0,0%)
+📊 Average Threat Score: 9,75/10
+⚠️  High Risk (>7): 5
+⏱️  Total Time: 48ms
+
+──────────────────────────────────────────────────────
+DETAILED RESULTS:
+──────────────────────────────────────────────────────
+
+🔴 sample-112.eml - 🚨 PHISHING
+   Score: 10,0/10 | Confidence: 90%
+   Risks: 🚨 Requests personal information, ⚠️ Money/prize-related content
+
+🔴 sample-113.eml - 🚨 PHISHING
+   Score: 10,0/10 | Confidence: 85%
+   Risks: ⚠️ Suspicious URL detected, ⚠️ Missing professional signature
+
+🔴 sample-114.eml - 🚨 PHISHING
+   Score: 10,0/10 | Confidence: 89%
+   Risks: 4 factors detected
+
+🔴 sample-115.eml - 🚨 PHISHING
+   Score: 8,7/10 | Confidence: 82%
+   Risks: ⚠️ Money/prize-related content
+
+🔴 sample-116.eml - 🚨 PHISHING
+   Score: 10,0/10 | Confidence: 84%
+   Risks: ⚠️ Suspicious URL detected, ⚠️ Money/prize-related content, ⚠️ Missing professional signature
+

@@ -1,0 +1,115 @@
+﻿══════════════════════════════════════════════════════
+  📊 BATCH ANALYSIS SUMMARY
+══════════════════════════════════════════════════════
+
+📧 Total Emails: 25
+🚨 Phishing: 25 (100,0%)
+✅ Legitimate: 0 (0,0%)
+📊 Average Threat Score: 9,74/10
+⚠️  High Risk (>7): 25
+⏱️  Total Time: 236ms
+
+──────────────────────────────────────────────────────
+DETAILED RESULTS:
+──────────────────────────────────────────────────────
+
+🔴 sample-41.eml - 🚨 PHISHING
+   Score: 10,0/10 | Confidence: 82%
+   Risks: 4 factors detected
+
+🔴 sample-42.eml - 🚨 PHISHING
+   Score: 10,0/10 | Confidence: 82%
+   Risks: 4 factors detected
+
+🔴 sample-43.eml - 🚨 PHISHING
+   Score: 10,0/10 | Confidence: 89%
+   Risks: 4 factors detected
+
+🔴 sample-44.eml - 🚨 PHISHING
+   Score: 10,0/10 | Confidence: 91%
+   Risks: 4 factors detected
+
+🔴 sample-45.eml - 🚨 PHISHING
+   Score: 9,1/10 | Confidence: 76%
+   Risks: ⚠️ Suspicious URL detected, ⚠️ Multiple URLs (7), ⚠️ Missing professional signature
+
+🔴 sample-46.eml - 🚨 PHISHING
+   Score: 10,0/10 | Confidence: 88%
+   Risks: ⚠️ Suspicious URL detected, ⚠️ Multiple URLs (8), ⚠️ Missing professional signature
+
+🔴 sample-47.eml - 🚨 PHISHING
+   Score: 10,0/10 | Confidence: 90%
+   Risks: ⚠️ Suspicious URL detected, ⚠️ Money/prize-related content
+
+🔴 sample-48.eml - 🚨 PHISHING
+   Score: 9,6/10 | Confidence: 81%
+   Risks: ⚠️ Suspicious URL detected, ⚠️ Multiple URLs (4), ⚠️ Missing professional signature
+
+🔴 sample-49.eml - 🚨 PHISHING
+   Score: 10,0/10 | Confidence: 90%
+   Risks: 4 factors detected
+
+🔴 sample-50.eml - 🚨 PHISHING
+   Score: 8,8/10 | Confidence: 88%
+   Risks: ⚠️ Missing professional signature
+
+🟠 sample-51.eml - 🚨 PHISHING
+   Score: 7,5/10 | Confidence: 57%
+   Risks: 4 factors detected
+
+🔴 sample-52.eml - 🚨 PHISHING
+   Score: 9,7/10 | Confidence: 82%
+   Risks: ⚠️ Suspicious URL detected, ⚠️ Multiple URLs (20), ⚠️ Missing professional signature
+
+🔴 sample-53.eml - 🚨 PHISHING
+   Score: 10,0/10 | Confidence: 90%
+   Risks: ⚠️ Suspicious URL detected, ⚠️ Money/prize-related content, ⚠️ Missing professional signature
+
+🔴 sample-54.eml - 🚨 PHISHING
+   Score: 10,0/10 | Confidence: 87%
+   Risks: ⚠️ Suspicious URL detected, ⚠️ Multiple URLs (8)
+
+🔴 sample-55.eml - 🚨 PHISHING
+   Score: 10,0/10 | Confidence: 87%
+   Risks: ⚠️ Suspicious URL detected, ⚠️ Multiple URLs (8)
+
+🔴 sample-56.eml - 🚨 PHISHING
+   Score: 10,0/10 | Confidence: 88%
+   Risks: ⚠️ Suspicious URL detected, ⚠️ Multiple URLs (8)
+
+🔴 sample-57.eml - 🚨 PHISHING
+   Score: 9,5/10 | Confidence: 90%
+   Risks: ⚠️ Money/prize-related content, ⚠️ Missing professional signature
+
+🔴 sample-58.eml - 🚨 PHISHING
+   Score: 9,3/10 | Confidence: 83%
+   Risks: ⚠️ Generic greeting (not personalized), ⚠️ Money/prize-related content
+
+🔴 sample-59.eml - 🚨 PHISHING
+   Score: 10,0/10 | Confidence: 87%
+   Risks: ⚠️ Suspicious URL detected, ⚠️ Multiple URLs (7), ⚠️ Missing professional signature
+
+🔴 sample-60.eml - 🚨 PHISHING
+   Score: 10,0/10 | Confidence: 87%
+   Risks: ⚠️ Suspicious URL detected, ⚠️ Multiple URLs (7)
+
+🔴 sample-61.eml - 🚨 PHISHING
+   Score: 10,0/10 | Confidence: 87%
+   Risks: ⚠️ Suspicious URL detected, ⚠️ Multiple URLs (7)
+
+🔴 sample-62.eml - 🚨 PHISHING
+   Score: 10,0/10 | Confidence: 90%
+   Risks: ⚠️ Suspicious URL detected, ⚠️ Money/prize-related content, ⚠️ Missing professional signature
+
+🔴 sample-63.eml - 🚨 PHISHING
+   Score: 10,0/10 | Confidence: 73%
+   Risks: 4 factors detected
+
+🔴 sample-64.eml - 🚨 PHISHING
+   Score: 10,0/10 | Confidence: 87%
+   Risks: ⚠️ Suspicious URL detected, ⚠️ Multiple URLs (8), ⚠️ Missing professional signature
+
+🔴 sample-65.eml - 🚨 PHISHING
+   Score: 10,0/10 | Confidence: 81%
+   Risks: ⚠️ Suspicious URL detected, ⚠️ Requests user to click link, ⚠️ Multiple URLs (6)
+
