@@ -7,7 +7,7 @@
 ✅ Legitimate: 7 (63,6%)
 📊 Average Threat Score: 5,77/10
 ⚠️  High Risk (>7): 4
-⏱️  Total Time: 109ms
+⏱️  Total Time: 107ms
 
 ──────────────────────────────────────────────────────
 DETAILED RESULTS:
