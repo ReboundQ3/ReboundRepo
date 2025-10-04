@@ -31,9 +31,10 @@ public class EmailAnalyzer
             throw new FileNotFoundException($"Python script not found at: {_pythonScriptPath}");
         }
         
+        // Write info to stderr so it's visible in terminal
         Console.ForegroundColor = ConsoleColor.Gray;
-        Console.WriteLine($"[INFO] Python script: {_pythonScriptPath}");
-        Console.WriteLine($"[INFO] Python executable: {_pythonExecutable}");
+        Console.Error.WriteLine($"[INFO] Python script: {_pythonScriptPath}");
+        Console.Error.WriteLine($"[INFO] Python executable: {_pythonExecutable}");
         Console.ResetColor();
     }
     
@@ -111,7 +112,7 @@ public class EmailAnalyzer
         catch (Exception ex)
         {
             Console.ForegroundColor = ConsoleColor.Red;
-            Console.WriteLine($"[ERROR] Analysis failed: {ex.Message}");
+            Console.Error.WriteLine($"[ERROR] Analysis failed: {ex.Message}");
             Console.ResetColor();
             
             return new AnalysisResult
@@ -167,9 +168,9 @@ public class EmailAnalyzer
         var error = errorBuilder.ToString();
         if (!string.IsNullOrEmpty(error))
         {
-            // Print Python stderr (includes model loading messages)
+            // Print Python stderr to terminal (includes model loading messages)
             Console.ForegroundColor = ConsoleColor.DarkGray;
-            Console.WriteLine($"[Python] {error.Trim()}");
+            Console.Error.WriteLine($"[Python] {error.Trim()}");
             Console.ResetColor();
         }
         
@@ -214,18 +215,24 @@ public class EmailAnalyzer
         
         if (files.Length == 0)
         {
-            Console.WriteLine("⚠️  No .txt or .eml files found in folder");
+            Console.Error.WriteLine("⚠️  No .txt or .eml files found in folder");
             return new BatchResults();
         }
         
-        Console.WriteLine($"\n📁 Processing {files.Length} emails...\n");
+        // Write progress info to stderr so it shows in terminal even when output redirected
+        Console.Error.WriteLine($"\n📁 Processing {files.Length} emails...");
+        Console.Error.WriteLine();
         
+        var startTime = DateTime.Now;
         var progressBar = 0;
+        
         foreach (var file in files)
         {
             progressBar++;
             var fileName = Path.GetFileName(file);
-            Console.Write($"[{progressBar}/{files.Length}] {fileName}... ");
+            
+            // Show progress bar (to terminal/stderr)
+            DrawProgressBar(progressBar, files.Length, fileName);
             
             try
             {
@@ -242,31 +249,63 @@ public class EmailAnalyzer
                 
                 results.Add(result);
                 
-                // Show result
+                // Update progress bar with result (to terminal/stderr)
+                Console.Error.Write(" ");
                 if (result.IsPhishing)
                 {
                     Console.ForegroundColor = ConsoleColor.Red;
-                    Console.WriteLine($"⚠️  PHISHING ({result.ThreatScore:F1}/10)");
+                    Console.Error.Write($"🚨 PHISHING ({result.ThreatScore:F1}/10)");
                 }
                 else
                 {
                     Console.ForegroundColor = ConsoleColor.Green;
-                    Console.WriteLine($"✓ SAFE ({result.ThreatScore:F1}/10)");
+                    Console.Error.Write($"✅ SAFE ({result.ThreatScore:F1}/10)");
                 }
                 Console.ResetColor();
+                Console.Error.WriteLine();
             }
             catch (Exception ex)
             {
+                Console.Error.Write(" ");
                 Console.ForegroundColor = ConsoleColor.Yellow;
-                Console.WriteLine($"❌ ERROR: {ex.Message}");
+                Console.Error.Write($"❌ ERROR: {ex.Message}");
                 Console.ResetColor();
+                Console.Error.WriteLine();
             }
         }
+        
+        var elapsed = DateTime.Now - startTime;
+        Console.Error.WriteLine();
+        Console.Error.WriteLine($"✅ Completed in {elapsed.TotalSeconds:F1}s");
+        Console.Error.WriteLine();
         
         return new BatchResults
         {
             Results = results
         };
+    }
+    
+    private void DrawProgressBar(int current, int total, string fileName)
+    {
+        const int barWidth = 30;
+        var percentage = (double)current / total;
+        var filledWidth = (int)(barWidth * percentage);
+        
+        Console.Error.Write($"[{current}/{total}] ");
+        
+        // Draw progress bar
+        Console.Error.Write("[");
+        Console.ForegroundColor = ConsoleColor.Cyan;
+        Console.Error.Write(new string('█', filledWidth));
+        Console.ResetColor();
+        Console.Error.Write(new string('░', barWidth - filledWidth));
+        Console.Error.Write("]");
+        
+        Console.Error.Write($" {percentage * 100:F0}% ");
+        
+        // Truncate filename if too long
+        var displayName = fileName.Length > 30 ? fileName.Substring(0, 27) + "..." : fileName;
+        Console.Error.Write($"{displayName}");
     }
     
     public async Task<string> GeneratePhishingExample(string brand)

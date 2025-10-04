@@ -25,6 +25,7 @@ class ProgramCLI
         
         string command = args[0].ToLower();
         string? outputFile = null;
+        bool autoOutput = false;
         
         // Check for output file flag
         for (int i = 0; i < args.Length; i++)
@@ -35,7 +36,31 @@ class ProgramCLI
                 {
                     outputFile = args[i + 1];
                 }
+                else
+                {
+                    autoOutput = true; // -o without filename means auto-generate
+                }
             }
+        }
+        
+        // Auto-generate output filename if not specified
+        if (autoOutput && string.IsNullOrEmpty(outputFile))
+        {
+            var timestamp = DateTime.Now.ToString("yyyyMMdd_HHmmss");
+            outputFile = command switch
+            {
+                "analyze" or "-a" or "--analyze" => $"analysis_{timestamp}.txt",
+                "batch" or "-b" or "--batch" => $"batch_analysis_{timestamp}.txt",
+                _ => $"output_{timestamp}.txt"
+            };
+        }
+        
+        // Ensure results directory exists
+        if (!string.IsNullOrEmpty(outputFile))
+        {
+            var resultsDir = Path.Combine(Directory.GetCurrentDirectory(), "../../data/results");
+            Directory.CreateDirectory(resultsDir);
+            outputFile = Path.Combine(resultsDir, Path.GetFileName(outputFile));
         }
         
         // Redirect console output to file if specified
@@ -110,36 +135,57 @@ class ProgramCLI
     
     static void ShowHelp()
     {
-        Console.WriteLine("══════════════════════════════════════════════════════");
-        Console.WriteLine("  🛡️  PHISHING DETECTOR - COMMAND LINE USAGE");
-        Console.WriteLine("══════════════════════════════════════════════════════");
+        Console.WriteLine("╔══════════════════════════════════════════════════════╗");
+        Console.WriteLine("║  🛡️  PHISHING DETECTOR - AI-POWERED EMAIL SECURITY  ║");
+        Console.WriteLine("╚══════════════════════════════════════════════════════╝");
+        Console.WriteLine();
+        Console.WriteLine("USAGE:");
+        Console.WriteLine("  dotnet run -- <command> [options]");
         Console.WriteLine();
         Console.WriteLine("COMMANDS:");
-        Console.WriteLine("  analyze <file>        Analyze a single email file");
-        Console.WriteLine("  batch <folder>        Analyze all emails in a folder");
-        Console.WriteLine("  help                  Show this help message");
+        Console.WriteLine("  analyze <file>              Analyze a single email (.txt, .eml)");
+        Console.WriteLine("  batch <folder>              Analyze all emails in a folder");
+        Console.WriteLine("  help                        Show this help message");
         Console.WriteLine();
         Console.WriteLine("OPTIONS:");
-        Console.WriteLine("  -o <file>             Write output to file");
+        Console.WriteLine("  -o, --output [file]         Save output to file (auto-generates filename if not provided)");
+        Console.WriteLine("                              Results saved to: data/results/");
         Console.WriteLine();
         Console.WriteLine("EXAMPLES:");
-        Console.WriteLine("  dotnet run -- analyze email.txt");
-        Console.WriteLine("  dotnet run -- analyze email.txt -o results.txt");
-        Console.WriteLine("  dotnet run -- batch ./test_emails");
-        Console.WriteLine("  dotnet run -- batch ./test_emails -o report.txt");
+        Console.WriteLine("  Basic analysis:");
+        Console.WriteLine("    dotnet run -- analyze ../../data/email/sample-1.eml");
+        Console.WriteLine();
+        Console.WriteLine("  Save results (auto-generated filename):");
+        Console.WriteLine("    dotnet run -- analyze email.txt -o");
+        Console.WriteLine("    → Saves to: data/results/analysis_20251004_143052.txt");
+        Console.WriteLine();
+        Console.WriteLine("  Custom output filename:");
+        Console.WriteLine("    dotnet run -- analyze email.txt -o my_analysis.txt");
+        Console.WriteLine("    → Saves to: data/results/my_analysis.txt");
+        Console.WriteLine();
+        Console.WriteLine("  Batch processing:");
+        Console.WriteLine("    dotnet run -- batch ../../data/email_sample -o");
+        Console.WriteLine("    → Saves to: data/results/batch_analysis_20251004_143052.txt");
+        Console.WriteLine();
+        Console.WriteLine("SUPPORTED FILE TYPES:");
+        Console.WriteLine("  • .txt  - Plain text emails");
+        Console.WriteLine("  • .eml  - Standard email format (headers + body)");
+        Console.WriteLine();
+        Console.WriteLine("NOTE: All results are automatically saved to data/results/ folder");
         Console.WriteLine();
     }
     
     static async Task AnalyzeFile(string filePath)
     {
-        Console.WriteLine("══════════════════════════════════════════════════════");
-        Console.WriteLine("  📧 EMAIL FILE ANALYSIS");
-        Console.WriteLine("══════════════════════════════════════════════════════");
-        Console.WriteLine();
+        // Write headers to stderr so they appear in terminal
+        Console.Error.WriteLine("══════════════════════════════════════════════════════");
+        Console.Error.WriteLine("  📧 EMAIL FILE ANALYSIS");
+        Console.Error.WriteLine("══════════════════════════════════════════════════════");
+        Console.Error.WriteLine();
         
         if (!File.Exists(filePath))
         {
-            Console.WriteLine($"❌ File not found: {filePath}");
+            Console.Error.WriteLine($"❌ File not found: {filePath}");
             return;
         }
         
@@ -150,15 +196,15 @@ class ProgramCLI
             
             if (string.IsNullOrWhiteSpace(content))
             {
-                Console.WriteLine("❌ File is empty");
+                Console.Error.WriteLine("❌ File is empty");
                 return;
             }
             
-            Console.WriteLine($"📁 File: {Path.GetFileName(filePath)}");
-            Console.WriteLine($"📏 Size: {content.Length} characters");
-            Console.WriteLine();
-            Console.WriteLine("⏳ Analyzing...");
-            Console.WriteLine();
+            Console.Error.WriteLine($"📁 File: {Path.GetFileName(filePath)}");
+            Console.Error.WriteLine($"📏 Size: {content.Length} characters");
+            Console.Error.WriteLine();
+            Console.Error.WriteLine("⏳ Analyzing...");
+            Console.Error.WriteLine();
             
             var analyzer = new EmailAnalyzer();
             var result = await analyzer.AnalyzeEmail(content);
@@ -204,34 +250,35 @@ class ProgramCLI
             }
             else
             {
-                Console.WriteLine($"❌ Analysis failed: {result?.Error ?? "Unknown error"}");
+                Console.Error.WriteLine($"❌ Analysis failed: {result?.Error ?? "Unknown error"}");
             }
         }
         catch (Exception ex)
         {
-            Console.WriteLine($"❌ Error: {ex.Message}");
+            Console.Error.WriteLine($"❌ Error: {ex.Message}");
         }
     }
     
     static async Task BatchAnalyze(string folderPath)
     {
-        Console.WriteLine("══════════════════════════════════════════════════════");
-        Console.WriteLine("  📂 BATCH FOLDER ANALYSIS");
-        Console.WriteLine("══════════════════════════════════════════════════════");
-        Console.WriteLine();
+        // Write headers to stderr so they appear in terminal
+        Console.Error.WriteLine("══════════════════════════════════════════════════════");
+        Console.Error.WriteLine("  📂 BATCH FOLDER ANALYSIS");
+        Console.Error.WriteLine("══════════════════════════════════════════════════════");
+        Console.Error.WriteLine();
         
         if (!Directory.Exists(folderPath))
         {
-            Console.WriteLine($"❌ Folder not found: {folderPath}");
+            Console.Error.WriteLine($"❌ Folder not found: {folderPath}");
             return;
         }
         
         try
         {
-            Console.WriteLine($"📁 Scanning folder: {folderPath}");
-            Console.WriteLine();
-            Console.WriteLine("⏳ Processing emails...");
-            Console.WriteLine();
+            Console.Error.WriteLine($"📁 Scanning folder: {folderPath}");
+            Console.Error.WriteLine();
+            Console.Error.WriteLine("⏳ Processing emails...");
+            Console.Error.WriteLine();
             
             var analyzer = new EmailAnalyzer();
             var results = await analyzer.AnalyzeBatch(folderPath);
@@ -283,12 +330,12 @@ class ProgramCLI
             }
             else
             {
-                Console.WriteLine("❌ Batch analysis failed");
+                Console.Error.WriteLine("❌ Batch analysis failed");
             }
         }
         catch (Exception ex)
         {
-            Console.WriteLine($"❌ Error: {ex.Message}");
+            Console.Error.WriteLine($"❌ Error: {ex.Message}");
         }
     }
 }
