@@ -1,0 +1,32 @@
+﻿══════════════════════════════════════════════════════
+  📧 EMAIL FILE ANALYSIS
+══════════════════════════════════════════════════════
+
+📁 File: sample-1.eml
+📏 Size: 15966 characters
+
+⏳ Analyzing...
+
+[INFO] Python script: D:\Visual Studio Code\ReboundRepo\PhishingDetector\ml_backend\analyzer.py
+[INFO] Python executable: python
+[Python] \U0001f504 Loading spam detection model...
+\U0001f4c1 Using local model: D:\Visual Studio Code\ReboundRepo\PhishingDetector\ml_backend\..\bert-tiny-finetunes-sms-spam-detection
+Device set to use cpu
+\u2705 Model loaded successfully!
+══════════════════════════════════════════════════════
+  📊 ANALYSIS RESULT
+══════════════════════════════════════════════════════
+
+Status: 🚨 PHISHING DETECTED
+Risk Level: 🔴 CRITICAL
+Threat Score: 9,56/10
+ML Confidence: 90,6%
+Processing Time: 9ms
+
+⚠️  Risk Factors Detected:
+   • ⚠️ Money/prize-related content
+   • ⚠️ Missing professional signature
+
+💭 Analysis:
+   This email exhibits characteristics typical of phishing attempts (ML confidence: 90.6%).
+

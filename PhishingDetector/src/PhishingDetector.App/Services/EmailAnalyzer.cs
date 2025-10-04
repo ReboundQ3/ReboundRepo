@@ -1,0 +1,358 @@
+using System.Diagnostics;
+using System.Text;
+using System.Text.Json;
+using PhishingDetector.App.Models;
+
+namespace PhishingDetector.App.Services;
+
+/// <summary>
+/// Email analyzer that uses Python ML backend
+/// </summary>
+public class EmailAnalyzer
+{
+    private readonly string _pythonScriptPath;
+    private readonly string _pythonExecutable;
+    
+    public EmailAnalyzer()
+    {
+        // Get path to Python script (ml_backend folder)
+        var projectRoot = Path.GetFullPath(Path.Combine(
+            AppDomain.CurrentDomain.BaseDirectory,
+            "..", "..", "..", "..", ".."
+        ));
+        
+        _pythonScriptPath = Path.Combine(projectRoot, "ml_backend", "analyzer.py");
+        
+        // Try to find Python executable
+        _pythonExecutable = FindPythonExecutable();
+        
+        if (!File.Exists(_pythonScriptPath))
+        {
+            throw new FileNotFoundException($"Python script not found at: {_pythonScriptPath}");
+        }
+        
+        Console.ForegroundColor = ConsoleColor.Gray;
+        Console.WriteLine($"[INFO] Python script: {_pythonScriptPath}");
+        Console.WriteLine($"[INFO] Python executable: {_pythonExecutable}");
+        Console.ResetColor();
+    }
+    
+    private string FindPythonExecutable()
+    {
+        // Try common Python executable names
+        var pythonNames = new[] { "python", "python3", "py" };
+        
+        foreach (var name in pythonNames)
+        {
+            try
+            {
+                var psi = new ProcessStartInfo
+                {
+                    FileName = name,
+                    Arguments = "--version",
+                    RedirectStandardOutput = true,
+                    RedirectStandardError = true,
+                    UseShellExecute = false,
+                    CreateNoWindow = true
+                };
+                
+                using var process = Process.Start(psi);
+                if (process != null)
+                {
+                    process.WaitForExit();
+                    if (process.ExitCode == 0)
+                    {
+                        return name;
+                    }
+                }
+            }
+            catch
+            {
+                // Try next
+            }
+        }
+        
+        return "python"; // Default fallback
+    }
+    
+    public async Task<AnalysisResult> AnalyzeEmail(string emailContent)
+    {
+        if (string.IsNullOrWhiteSpace(emailContent))
+        {
+            return new AnalysisResult
+            {
+                Error = "Email content is empty",
+                IsPhishing = false,
+                ThreatScore = 0,
+                Reasoning = "No content to analyze"
+            };
+        }
+        
+        try
+        {
+            // Call Python script
+            var jsonResult = await RunPythonScript(emailContent);
+            
+            // Parse JSON result
+            var result = JsonSerializer.Deserialize<AnalysisResult>(jsonResult, new JsonSerializerOptions
+            {
+                PropertyNameCaseInsensitive = true
+            });
+            
+            if (result == null)
+            {
+                throw new Exception("Failed to deserialize analysis result");
+            }
+            
+            result.AnalyzedAt = DateTime.Now;
+            
+            return result;
+        }
+        catch (Exception ex)
+        {
+            Console.ForegroundColor = ConsoleColor.Red;
+            Console.WriteLine($"[ERROR] Analysis failed: {ex.Message}");
+            Console.ResetColor();
+            
+            return new AnalysisResult
+            {
+                Error = ex.Message,
+                IsPhishing = false,
+                ThreatScore = 0,
+                Reasoning = $"Analysis failed: {ex.Message}"
+            };
+        }
+    }
+    
+    private async Task<string> RunPythonScript(string emailContent)
+    {
+        // Escape the email content for command line
+        var escapedContent = EscapeForCommandLine(emailContent);
+        
+        var psi = new ProcessStartInfo
+        {
+            FileName = _pythonExecutable,
+            Arguments = $"\"{_pythonScriptPath}\" \"{escapedContent}\"",
+            RedirectStandardOutput = true,
+            RedirectStandardError = true,
+            UseShellExecute = false,
+            CreateNoWindow = true,
+            StandardOutputEncoding = Encoding.UTF8,
+            StandardErrorEncoding = Encoding.UTF8
+        };
+        
+        using var process = new Process { StartInfo = psi };
+        
+        var outputBuilder = new StringBuilder();
+        var errorBuilder = new StringBuilder();
+        
+        process.OutputDataReceived += (sender, e) =>
+        {
+            if (e.Data != null)
+                outputBuilder.AppendLine(e.Data);
+        };
+        
+        process.ErrorDataReceived += (sender, e) =>
+        {
+            if (e.Data != null)
+                errorBuilder.AppendLine(e.Data);
+        };
+        
+        process.Start();
+        process.BeginOutputReadLine();
+        process.BeginErrorReadLine();
+        
+        await process.WaitForExitAsync();
+        
+        var error = errorBuilder.ToString();
+        if (!string.IsNullOrEmpty(error))
+        {
+            // Print Python stderr (includes model loading messages)
+            Console.ForegroundColor = ConsoleColor.DarkGray;
+            Console.WriteLine($"[Python] {error.Trim()}");
+            Console.ResetColor();
+        }
+        
+        if (process.ExitCode != 0)
+        {
+            throw new Exception($"Python script failed with exit code {process.ExitCode}: {error}");
+        }
+        
+        var output = outputBuilder.ToString().Trim();
+        
+        if (string.IsNullOrEmpty(output))
+        {
+            throw new Exception("Python script returned empty output");
+        }
+        
+        return output;
+    }
+    
+    private string EscapeForCommandLine(string text)
+    {
+        // Replace problematic characters
+        return text
+            .Replace("\"", "\\\"")
+            .Replace("\r\n", " ")
+            .Replace("\n", " ")
+            .Replace("\r", " ");
+    }
+    
+    public async Task<BatchResults> AnalyzeBatch(string folderPath)
+    {
+        if (!Directory.Exists(folderPath))
+        {
+            throw new DirectoryNotFoundException($"Folder not found: {folderPath}");
+        }
+        
+        var results = new List<AnalysisResult>();
+        
+        // Support both .txt and .eml files
+        var txtFiles = Directory.GetFiles(folderPath, "*.txt", SearchOption.AllDirectories);
+        var emlFiles = Directory.GetFiles(folderPath, "*.eml", SearchOption.AllDirectories);
+        var files = txtFiles.Concat(emlFiles).ToArray();
+        
+        if (files.Length == 0)
+        {
+            Console.WriteLine("⚠️  No .txt or .eml files found in folder");
+            return new BatchResults();
+        }
+        
+        Console.WriteLine($"\n📁 Processing {files.Length} emails...\n");
+        
+        var progressBar = 0;
+        foreach (var file in files)
+        {
+            progressBar++;
+            var fileName = Path.GetFileName(file);
+            Console.Write($"[{progressBar}/{files.Length}] {fileName}... ");
+            
+            try
+            {
+                var content = await File.ReadAllTextAsync(file);
+                
+                // Extract body from .eml files
+                if (file.EndsWith(".eml", StringComparison.OrdinalIgnoreCase))
+                {
+                    content = ExtractEmailBody(content);
+                }
+                
+                var result = await AnalyzeEmail(content);
+                result.FileName = fileName;
+                
+                results.Add(result);
+                
+                // Show result
+                if (result.IsPhishing)
+                {
+                    Console.ForegroundColor = ConsoleColor.Red;
+                    Console.WriteLine($"⚠️  PHISHING ({result.ThreatScore:F1}/10)");
+                }
+                else
+                {
+                    Console.ForegroundColor = ConsoleColor.Green;
+                    Console.WriteLine($"✓ SAFE ({result.ThreatScore:F1}/10)");
+                }
+                Console.ResetColor();
+            }
+            catch (Exception ex)
+            {
+                Console.ForegroundColor = ConsoleColor.Yellow;
+                Console.WriteLine($"❌ ERROR: {ex.Message}");
+                Console.ResetColor();
+            }
+        }
+        
+        return new BatchResults
+        {
+            Results = results
+        };
+    }
+    
+    public async Task<string> GeneratePhishingExample(string brand)
+    {
+        var templates = new[]
+        {
+            $@"Subject: URGENT - {brand} Account Suspended
+
+Dear Customer,
+
+We have detected suspicious activity on your {brand} account.
+Your account has been temporarily suspended for your protection.
+
+Please verify your identity immediately by clicking the link below:
+http://{brand.ToLower()}-secure-verify.tk/login
+
+Failure to verify within 24 hours will result in permanent account closure.
+
+Thank you for your immediate attention to this matter.
+
+{brand} Security Team",
+
+            $@"Subject: {brand} - Unusual Activity Detected
+
+Hello,
+
+We noticed an unusual login attempt to your {brand} account from an unrecognized device.
+
+If this was not you, please secure your account immediately:
+Click here: http://verify-{brand.ToLower()}.ml/secure
+
+This link will expire in 6 hours.
+
+Regards,
+{brand} Trust & Safety",
+
+            $@"Subject: Congratulations! You've won a {brand} gift card!
+
+Dear Lucky Winner,
+
+You have been selected to receive a FREE ${new Random().Next(100, 1000)} {brand} gift card!
+
+Claim your prize now: http://free-{brand.ToLower()}-giftcard.buzz/claim
+
+This offer expires in 24 hours. Act now!
+
+{brand} Promotions Team"
+        };
+        
+        var random = new Random();
+        return templates[random.Next(templates.Length)];
+    }
+    
+    private string ExtractEmailBody(string emlContent)
+    {
+        // Simple EML parser - extracts text after headers
+        var lines = emlContent.Split(new[] { "\r\n", "\r", "\n" }, StringSplitOptions.None);
+        bool inBody = false;
+        var bodyLines = new List<string>();
+        
+        foreach (var line in lines)
+        {
+            if (inBody)
+            {
+                // Stop if we hit base64 encoded content (images, attachments)
+                if (line.Length > 1000 || line.All(c => char.IsLetterOrDigit(c) || c == '+' || c == '/' || c == '='))
+                {
+                    continue;
+                }
+                bodyLines.Add(line);
+            }
+            else if (string.IsNullOrWhiteSpace(line))
+            {
+                // Empty line marks end of headers
+                inBody = true;
+            }
+        }
+        
+        var body = string.Join("\n", bodyLines).Trim();
+        
+        // Limit body size to avoid huge emails
+        if (body.Length > 10000)
+        {
+            body = body.Substring(0, 10000);
+        }
+        
+        return body;
+    }
+}
