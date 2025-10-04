@@ -1,0 +1,59 @@
+﻿══════════════════════════════════════════════════════
+  📊 BATCH ANALYSIS SUMMARY
+══════════════════════════════════════════════════════
+
+📧 Total Emails: 11
+🚨 Phishing: 11 (100,0%)
+✅ Legitimate: 0 (0,0%)
+📊 Average Threat Score: 9,59/10
+⚠️  High Risk (>7): 11
+⏱️  Total Time: 105ms
+
+──────────────────────────────────────────────────────
+DETAILED RESULTS:
+──────────────────────────────────────────────────────
+
+🔴 1.eml - 🚨 PHISHING
+   Score: 9,5/10 | Confidence: 90%
+   Risks: ⚠️ Money/prize-related content, ⚠️ Missing professional signature
+
+🔴 10.eml - 🚨 PHISHING
+   Score: 10,0/10 | Confidence: 85%
+   Risks: ⚠️ Suspicious URL detected, ⚠️ Missing professional signature
+
+🔴 11.eml - 🚨 PHISHING
+   Score: 10,0/10 | Confidence: 84%
+   Risks: ⚠️ Suspicious URL detected, ⚠️ Money/prize-related content, ⚠️ Missing professional signature
+
+🔴 2.eml - 🚨 PHISHING
+   Score: 10,0/10 | Confidence: 90%
+   Risks: 🚨 Requests personal information, ⚠️ Money/prize-related content
+
+🔴 3.eml - 🚨 PHISHING
+   Score: 10,0/10 | Confidence: 89%
+   Risks: 4 factors detected
+
+🔴 4.eml - 🚨 PHISHING
+   Score: 9,5/10 | Confidence: 90%
+   Risks: ⚠️ Money/prize-related content, ⚠️ Missing professional signature
+
+🔴 5.eml - 🚨 PHISHING
+   Score: 9,4/10 | Confidence: 89%
+   Risks: ⚠️ Money/prize-related content, ⚠️ Missing professional signature
+
+🔴 6.eml - 🚨 PHISHING
+   Score: 9,5/10 | Confidence: 90%
+   Risks: ⚠️ Money/prize-related content, ⚠️ Missing professional signature
+
+🔴 7.eml - 🚨 PHISHING
+   Score: 8,7/10 | Confidence: 82%
+   Risks: ⚠️ Money/prize-related content
+
+🔴 8.eml - 🚨 PHISHING
+   Score: 9,4/10 | Confidence: 89%
+   Risks: ⚠️ Money/prize-related content, ⚠️ Missing professional signature
+
+🔴 9.eml - 🚨 PHISHING
+   Score: 9,4/10 | Confidence: 89%
+   Risks: ⚠️ Money/prize-related content, ⚠️ Missing professional signature
+

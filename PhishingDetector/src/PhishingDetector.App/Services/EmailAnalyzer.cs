@@ -361,17 +361,33 @@ This offer expires in 24 hours. Act now!
     
     private string ExtractEmailBody(string emlContent)
     {
-        // Simple EML parser - extracts text after headers
+        // Parse EML - keep IMPORTANT headers + body for proper analysis
+        // Headers like SPF, DKIM, DMARC are CRITICAL for phishing detection!
         var lines = emlContent.Split(new[] { "\r\n", "\r", "\n" }, StringSplitOptions.None);
         bool inBody = false;
+        var importantHeaders = new List<string>();
         var bodyLines = new List<string>();
+        
+        // List of header prefixes we want to keep
+        var keepHeaders = new[]
+        {
+            "authentication-results:",
+            "received-spf:",
+            "dkim-signature:",
+            "from:",
+            "subject:",
+            "x-mailer:",
+            "list-unsubscribe:",
+            "return-path:",
+            "sender:"
+        };
         
         foreach (var line in lines)
         {
             if (inBody)
             {
                 // Stop if we hit base64 encoded content (images, attachments)
-                if (line.Length > 1000 || line.All(c => char.IsLetterOrDigit(c) || c == '+' || c == '/' || c == '='))
+                if (line.Length > 1000 || (line.Length > 100 && line.All(c => char.IsLetterOrDigit(c) || c == '+' || c == '/' || c == '=')))
                 {
                     continue;
                 }
@@ -382,16 +398,39 @@ This offer expires in 24 hours. Act now!
                 // Empty line marks end of headers
                 inBody = true;
             }
+            else
+            {
+                // Check if this is an important header
+                var lineLower = line.ToLowerInvariant();
+                if (keepHeaders.Any(h => lineLower.StartsWith(h)) || 
+                    (line.StartsWith(" ") && importantHeaders.Count > 0)) // Continuation line
+                {
+                    importantHeaders.Add(line);
+                }
+            }
         }
         
-        var body = string.Join("\n", bodyLines).Trim();
+        // Combine: important headers + body
+        var headerSection = string.Join("\n", importantHeaders);
+        var bodySection = string.Join("\n", bodyLines).Trim();
         
-        // Limit body size to avoid huge emails
-        if (body.Length > 10000)
+        // Limit total size to avoid huge emails
+        var combined = headerSection + "\n\n" + bodySection;
+        if (combined.Length > 15000)
         {
-            body = body.Substring(0, 10000);
+            // Keep headers, limit body
+            if (headerSection.Length > 5000)
+            {
+                headerSection = headerSection.Substring(0, 5000);
+            }
+            var remainingSpace = 15000 - headerSection.Length;
+            if (bodySection.Length > remainingSpace)
+            {
+                bodySection = bodySection.Substring(0, remainingSpace);
+            }
+            combined = headerSection + "\n\n" + bodySection;
         }
         
-        return body;
+        return combined;
     }
 }

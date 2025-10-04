@@ -1,0 +1,59 @@
+﻿══════════════════════════════════════════════════════
+  📊 BATCH ANALYSIS SUMMARY
+══════════════════════════════════════════════════════
+
+📧 Total Emails: 11
+🚨 Phishing: 4 (36,4%)
+✅ Legitimate: 7 (63,6%)
+📊 Average Threat Score: 5,77/10
+⚠️  High Risk (>7): 4
+⏱️  Total Time: 109ms
+
+──────────────────────────────────────────────────────
+DETAILED RESULTS:
+──────────────────────────────────────────────────────
+
+🟡 1-G.eml - ✅ SAFE
+   Score: 5,0/10 | Confidence: 89%
+   Risks: 5 factors detected
+
+🔴 10-B.eml - 🚨 PHISHING
+   Score: 9,4/10 | Confidence: 89%
+   Risks: ✅ Known legitimate email service, ⚠️ Suspicious URL detected
+
+🔴 11-B.eml - 🚨 PHISHING
+   Score: 8,7/10 | Confidence: 79%
+   Risks: ✅ Known legitimate email service, ⚠️ Suspicious URL detected, ⚠️ Money/prize-related content
+
+🔴 2-B.eml - 🚨 PHISHING
+   Score: 8,6/10 | Confidence: 88%
+   Risks: 4 factors detected
+
+🟡 3-B.eml - ✅ SAFE
+   Score: 4,0/10 | Confidence: 82%
+   Risks: 5 factors detected
+
+🔵 4-G.eml - ✅ SAFE
+   Score: 3,9/10 | Confidence: 86%
+   Risks: ✅ Email authentication: SPF, DKIM, DMARC passed, ⚠️ Money/prize-related content, ✓ Low risk - appears legitimate
+
+🟡 5-G.eml - ✅ SAFE
+   Score: 4,2/10 | Confidence: 89%
+   Risks: 4 factors detected
+
+🟡 6-G.eml - ✅ SAFE
+   Score: 5,0/10 | Confidence: 89%
+   Risks: 5 factors detected
+
+🔴 7-B.eml - 🚨 PHISHING
+   Score: 8,1/10 | Confidence: 88%
+   Risks: ✅ Known legitimate email service, ⚠️ Money/prize-related content
+
+🔵 8-G.eml - ✅ SAFE
+   Score: 3,3/10 | Confidence: 90%
+   Risks: ✅ Email authentication: SPF, DKIM, DMARC passed, ✅ Known legitimate email service, ⚠️ Money/prize-related content
+
+🔵 9-G.eml - ✅ SAFE
+   Score: 3,3/10 | Confidence: 90%
+   Risks: ✅ Email authentication: SPF, DKIM, DMARC passed, ✅ Known legitimate email service, ⚠️ Money/prize-related content
+

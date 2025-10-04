@@ -1,0 +1,99 @@
+Return-Path: <01020199aafb17fe-aae737c1-9966-4977-8e44-d63c120a70e6-000000@eu-west-1.amazonses.com>
+X-Original-To: koen.bolte@proton.me
+Delivered-To: Koen.Bolte@proton.me
+Authentication-Results: mail.protonmail.ch; dkim=pass (Good 2048 bit
+    rsa-sha256 signature) header.d=vintagestory.at header.a=rsa-sha256;
+    dkim=pass (Good 1024 bit rsa-sha256 signature) header.d=amazonses.com
+    header.a=rsa-sha256
+Authentication-Results: mail.protonmail.ch; dmarc=pass (p=none dis=none)
+ header.from=vintagestory.at
+Authentication-Results: mail.protonmail.ch; spf=pass smtp.mailfrom=eu-west-1.amazonses.com
+Authentication-Results: mail.protonmail.ch; arc=none smtp.remote-ip=54.240.4.3
+Authentication-Results: mail.protonmail.ch; dkim=pass (2048-bit key)
+ header.d=vintagestory.at header.i=@vintagestory.at header.b="OVPdJDuP"; dkim=pass
+ (1024-bit key) header.d=amazonses.com header.i=@amazonses.com header.b="UjWyqmYV"
+Received: from a4-3.smtp-out.eu-west-1.amazonses.com
+ (a4-3.smtp-out.eu-west-1.amazonses.com [54.240.4.3]) (using TLSv1.3 with cipher
+ TLS_AES_256_GCM_SHA384 (256/256 bits)
+  key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256) (No
+ client certificate requested) by mailinzur103.protonmail.ch (Postfix) with ESMTPS id
+ 4cdZQl17gMz3k for <koen.bolte@proton.me>; Fri,
+  3 Oct 2025 16:50:06 +0000 (UTC)
+Dkim-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/simple;
+ s=zx7ihqjqtolq7czhhsej63hxyzkixjg3; d=vintagestory.at; t=1759510206;
+ h=Subject:From:To:Date:Content-Type:MIME-Version:Message-ID;
+ bh=kzzx1KXVgQTv9xY2ovaDq+drnZOV6ViTuMfmwssACbk=;
+ b=OVPdJDuPrV7IbH4hY26VoBOav47gvciInSfS6L86qKNzPAwWusMkV11PBnWOX50Y
+ twhXo3jedIrriupTE1MsNtwk+AyXrywk0jGVXa6ab2cAe0t5wiZFpUxhkdfoAvg8Knc
+ +WguEeqMOp6qFNzig9hNikDxjexMPIVFL8nQ7a6hG3hDlROt8Uv3iSmNXAYCuEJss0S
+ Mn2kOVH4Q8sQ1C6K6pCIyNHk2zD13Df8hjccpRAOUI9ToAfjZRlHQVSuzjuBL2d+weX
+ urSqeuWxy6UD2z+N3frJ6CpBIoNrqXeuISe+WKsrUlUCsDJRzhg9LGLe35J+j00rIlj Kf9XJRNx4g==
+Dkim-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/simple;
+ s=ihchhvubuqgjsxyuhssfvqohv7z3u4hn; d=amazonses.com; t=1759510206;
+ h=Subject:From:To:Date:Content-Type:MIME-Version:Message-ID:Feedback-ID;
+ bh=kzzx1KXVgQTv9xY2ovaDq+drnZOV6ViTuMfmwssACbk=;
+ b=UjWyqmYVcVQDFqAjxyYDNcLjIbJZGbj0QvRD6nsBDK8IvmIuu/JI1L/H9AqhdwG3
+ zvdwyraJF8MCsnrPjcEfXNIB0lS7gH0sttbocF5Y1q/VxNZveQTcx3y1otSeA9VdOWP
+ DIAS5yMM2SMMrP9znKg2cQ/wF7S95GmP1l4oGMNo=
+Subject: Vintage Story Game Account Created \o/
+From: office@vintagestory.at
+To: koen.bolte@proton.me
+Date: Fri, 03 Oct 2025 16:50:06 +0000
+Content-Type: multipart/mixed;boundary=---------------------8eb1ddf35f57b3c237004fcad372f49b
+Mime-Version: 1.0
+Message-Id: <01020199aafb17fe-aae737c1-9966-4977-8e44-d63c120a70e6-000000@eu-west-1.amazonses.com>
+Feedback-Id: ::1.eu-west-1.kn/SkRH1no/OC2Jmo5MY9YK0APjLlnv75Bk8RM+Lj3M=:AmazonSES
+X-Ses-Outgoing: 2025.10.03-54.240.4.3
+X-Pm-Spam: 0yezJI6YSpyJec91ztFGcjIwoJyLCvXBZcQniisnOkQZFNfRVijAMOslwsUjLnIjNJlb
+ 3wiAOLAj3iETMSXiwtJRETV9TSdUOiQURlOwsFdLjECJLSl0NBZ1XETElpbIjuTALM0VsLRkIUSf1F
+ MVkfURSQUVitslOCMx4wiXSJEtRT9VWJxUQFRF9I6Riwy0WLFjdIJCLUREFJfRVPlJRT9VEGZUSVRF
+ JRfTlNE9RQlUO6IyUzWdBJILCME1VX10FBN1U0RiUswOliSwXTNVHfRUSlRPJ9NTVfEFVSVEBSVERj
+ Ibp0sMFDlJIVRkff5USVTQNtFSUy0gXIpjbiwCMTNuQQwMjujQLMBys0NXaWZgQ4gaWu2wdbFWpwNH
+ bWalt5lLmdCJdLJCSEZ1Q0XOlZBX1EElTSRVZFN0XlUJRlFRkCF9RT9EDEV0SjIbpwiMCuTQNMQjwu
+ QjLyMsBN0aXgWQZa4WgtE2cWYjNVkcmuXQaaFGizFWZmLvNJdbSSCJLQZ1EOl0X1XBZlETEZVRSXJ1
+ QfxkQkQPxtFQ06CIRWAzs0UjIjL0I40MCgjMLblGzkVGdGIulJsIGjnNLbJ3llNnLmblRNjcnl3JbL
+ NmvdJSbCLTJZfUEMEVST91OF50TjIbp0sMFQlNIR9lQTNVQjIbpBdLTiSwfcN2viUmcjOsANjInl3J
+ bZIC6z4CMSfiwIic3insOYNW0u9WajIio5iaWi3gbLJCjlRXY2Zy9I6eSIlRISJVEBB1XlUZRJFX1T
+ 0lRVJFBPlEViTsI1sImj3NXbJ3l7pjIlISBQiT0yi0ONwSiPJFUFRQ9VEUkUUNSS9UOwojICLSJI6U
+ yuTELMQTsBNlIjIwoMsLjkl9IZJW1p91ZmbvZp7IjSlBITQ0iisnOWah1VfZ2tmFbZIS6zhmIGdjF9
+ ma1lW5aXR31kVmb3X1BIwXzwjUMNMjwiwiIWbpF8zbFfHJcb9WkiwWZiOtJlsYWy3BML0Sy1IDMDMx
+ k5wMisCIdI1mhfxWa3MyBByX3i2IbOAjuzkTOjMzMc4OT4zQNMIzxiwSNWbpF9jbFlXRYZ92yt9Ve2
+ blRI6bChm1IaxWjtQXYTLwIUwMjyTEOLBn0iwiIWbpF9jbFlXRYZ92yu9VeWYl1oiIjJEhVURkfSFE
+ UFVflVHUkUVNSUFkUO9USiIiwFpbWjF9bYRXly92ZVew99icmwjoILkj5zIzMzM3kc0ODyDMOMUTsf
+ BnI3chBI6bSwC4MMgT41gzMTMykA0Mz5DQONIjsfBnI3chB9ibVlXNYIojwxAjLDOzgUxODzTIOMQD
+ 42kDNiMiw9zcF02ldYh2ff9GdGcphhpc2imcbOAjuyADMjN0gEzOD1jIMNQjx2QDOyNiwVucnh25Xb
+ UWihJiOGbtwVhZmyHVdZMXtfVHc3cpdNodG9n1IfwSipJ3cCZ6IY4IjmGZZZMWw0ETOGOiNQ5YWxWQ
+ YNRDj9JCZfQ==
+X-Pm-Origin: external
+X-Pm-Transfer-Encryption: TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+X-Pm-Content-Encryption: on-delivery
+X-Pm-Spamscore: 0
+X-Pm-Spam-Action: inbox
+
+-----------------------8eb1ddf35f57b3c237004fcad372f49b
+Content-Type: multipart/related;boundary=---------------------72d2e12d598b65a661b47fac40b933e5
+
+-----------------------72d2e12d598b65a661b47fac40b933e5
+Content-Type: text/html;charset=utf-8
+Content-Transfer-Encoding: base64
+
+PGh0bWw+Cjxib2R5Pgo8cD5EZWFyIFJlYm91bmRRMyw8L3A+Cgo8cD5Zb3VyIGdhbWUgYWNjb3Vu
+dCBoYXMgYmVlbiBjcmVhdGVkISBJIHdpc2ggeW91IHRoZSBtb3N0IHdvbmRlcmZ1bCBvZiBqb3Vy
+bmV5cyB3aGlsZSBwbGF5aW5nIHRoZSBnYW1lIDotKTwvcD4KCjxwPjxhIGhyZWY9Imh0dHBzOi8v
+YWNjb3VudC52aW50YWdlc3RvcnkuYXQvZG93bmxvYWRzIj48Yj5Eb3dubG9hZCB0aGUgR2FtZSBp
+biB0aGUgQWNjb3VudCBNYW5hZ2VyPC9iPjwvYT48L3A+Cgo8cD5UbyByZWNhcCwgaGVyZSdzIHlv
+dXIgYWNjb3VudCBpbmZvOjxwPgo8cD4KRmlyc3RuYW1lOiBLb2VuPGJyPgpMYXN0bmFtZTogQm9s
+dGU8YnI+ClBsYXllcm5hbWU6IFJlYm91bmRRMzxicj4KRW1haWw6IGtvZW4uYm9sdGVAcHJvdG9u
+Lm1lPGJyPgo8L3A+Cgo8cD5QbGVhc2UgbWFrZSBzdXJlIGFsbCBpbmZvcyBhcmUgY29ycmVjdCwg
+eW91IG1pZ2h0IG5lZWQgdGhlbSB3aGVuIHlvdSB3YW50IHRvIDxhIGhyZWY9Imh0dHBzOi8vYWNj
+b3VudC52aW50YWdlc3RvcnkuYXQvcmVxdWVzdHJlc2V0cHdkIj5yZXNldCB5b3VyIHBhc3N3b3Jk
+PC9hPiBvciB3YW50IHRvIHJlY292ZXIgeW91ciBhY2NvdW50PC9wPgoKPHA+SWYgeW91IGhhdmUg
+dHJvdWJsZXMgc3RhcnRpbmcgdGhlIGdhbWUsIDxhIGhyZWY9Imh0dHA6Ly93d3cudmludGFnZXN0
+b3J5LmF0L2ZvcnVtcy9mb3J1bS8xNS1zdXBwb3J0LyI+cGxlYXNlIHdyaXRlIHVzIGluIHRoZSBz
+dXBwb3J0IGZvcnVtczwvYT4gKHJlcXVpcmVzIHlvdSB0byBsb2cgaW4gb24gb3VyIHNpdGUpLCBv
+ciAjZ2FtZXBsYXktaGVscCBvbiBvdXIgRGlzY29yZCBzZXJ2ZXIuIElmIHlvdSBzdXBwbHkgdXMg
+d2l0aCBhIGRldGFpbGVkIHByb2JsZW0gZGVzY3JpcHRpb24gKGFuZCB0aGUgZ2FtZXMgbG9nIGZp
+bGVzKSB3ZSB3aWxsIGJlIGFibGUgdG8gaGVscCB5b3UgbXVjaCBxdWlja2VyLjwvcD4KCjxwPkJl
+c3QgcmVnYXJkcyw8YnI+CiZuYnNwOyZuYnNwO1R5cm9uCjwvcD4KPC9ib2R5Pgo8L2h0bWw+Cg==
+-----------------------72d2e12d598b65a661b47fac40b933e5--
+-----------------------8eb1ddf35f57b3c237004fcad372f49b--

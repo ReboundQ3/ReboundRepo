@@ -50,6 +50,18 @@ class PhishingAnalyzer:
             print("💡 Make sure you have internet connection for first-time download", file=sys.stderr)
             sys.exit(1)
     
+    def extract_email_headers(self, email_text):
+        """Extract email authentication headers (SPF, DKIM, DMARC)"""
+        headers = {
+            'has_spf_pass': bool(re.search(r'spf\s*=\s*pass', email_text, re.IGNORECASE)),
+            'has_dkim_pass': bool(re.search(r'dkim\s*=\s*pass', email_text, re.IGNORECASE)),
+            'has_dmarc_pass': bool(re.search(r'dmarc\s*=\s*pass', email_text, re.IGNORECASE)),
+            'is_mailchimp': bool(re.search(r'mailchimp|x-mailer.*mailchimp', email_text, re.IGNORECASE)),
+            'is_known_sender': bool(re.search(r'(microsoft|google|amazon|apple|facebook|linkedin|github|mailchimp|sendgrid|salesforce)', email_text, re.IGNORECASE)),
+            'has_list_unsubscribe': bool(re.search(r'list-unsubscribe:', email_text, re.IGNORECASE))
+        }
+        return headers
+    
     def extract_features(self, email_text):
         """Extract manual features from email for enhanced detection"""
         
@@ -105,12 +117,12 @@ class PhishingAnalyzer:
         leetspeak = ['cl1ck', 'f0ll0w', 'acc0unt', 'l0gin', 'em@il', 'p@ssword', 'w1n', 'fr33', 'm0ney']
         return any(typo in text for typo in leetspeak)
     
-    def calculate_threat_score(self, ml_label, ml_confidence, features):
+    def calculate_threat_score(self, ml_label, ml_confidence, features, headers):
         """
-        Calculate threat score (0-10) based on ML prediction + manual features
+        Calculate threat score (0-10) based on ML prediction + manual features + email auth
         
         ML model gives us spam/ham classification
-        We enhance it with feature analysis
+        We enhance it with feature analysis and email authentication
         """
         
         # Base score from ML model
@@ -119,62 +131,90 @@ class PhishingAnalyzer:
         else:
             base_score = (1 - ml_confidence) * 10
         
+        # Check email authentication - legitimate marketing has these!
+        auth_score_reduction = 0
+        if headers['has_spf_pass']:
+            auth_score_reduction += 1.5  # SPF pass = legit sender
+        if headers['has_dkim_pass']:
+            auth_score_reduction += 2.0  # DKIM pass = verified signature
+        if headers['has_dmarc_pass']:
+            auth_score_reduction += 1.5  # DMARC pass = domain policy OK
+        if headers['is_mailchimp'] or headers['is_known_sender']:
+            auth_score_reduction += 1.0  # Known email service
+        if headers['has_list_unsubscribe']:
+            auth_score_reduction += 0.5  # Legitimate marketing has unsubscribe
+        
         # Boost based on features (max +3 points)
         boost = 0
         
         if features['has_suspicious_urls']:
             boost += 1.5
         if features['has_urgency']:
-            boost += 1.0
+            boost += 0.8  # Reduced - marketing also uses urgency
         if features['has_threats']:
-            boost += 1.0
+            boost += 1.5  # Increased - real red flag
         if features['requests_info']:
-            boost += 1.5
+            boost += 2.0  # Increased - major red flag
         if features['generic_greeting']:
-            boost += 0.5
+            boost += 0.3  # Reduced - common in marketing
         if features['suspicious_domain']:
             boost += 2.0
         if features['has_typos']:
             boost += 0.8
         if features['requests_click'] and features['has_urls']:
-            boost += 0.7
+            boost += 0.5  # Reduced - marketing does this too
         if features['has_money_words']:
-            boost += 0.5
+            boost += 0.3  # Reduced - marketing uses this
         
-        # Calculate final score
-        final_score = min(base_score + boost, 10.0)
+        # Calculate final score with authentication penalty
+        # If email has strong authentication (SPF+DKIM+DMARC), reduce score significantly
+        final_score = base_score + boost - auth_score_reduction
+        final_score = max(0.0, min(final_score, 10.0))  # Clamp between 0-10
         
         return final_score
     
-    def generate_risk_factors(self, features):
+    def generate_risk_factors(self, features, headers):
         """Generate human-readable list of risk factors"""
         risk_factors = []
         
-        if features['has_urgency']:
-            risk_factors.append("⚠️ Urgency language detected (pressure tactics)")
+        # Show authentication status first (positive indicators)
+        auth_factors = []
+        if headers['has_spf_pass']:
+            auth_factors.append("SPF")
+        if headers['has_dkim_pass']:
+            auth_factors.append("DKIM")
+        if headers['has_dmarc_pass']:
+            auth_factors.append("DMARC")
+        if auth_factors:
+            risk_factors.append(f"✅ Email authentication: {', '.join(auth_factors)} passed")
+        
+        if headers['is_mailchimp'] or headers['is_known_sender']:
+            risk_factors.append("✅ Known legitimate email service")
+        
+        # Now show risk factors
         if features['has_threats']:
-            risk_factors.append("⚠️ Threatening language (account suspension/closure)")
-        if features['has_suspicious_urls']:
-            risk_factors.append("⚠️ Suspicious URL detected")
-        if features['suspicious_domain']:
-            risk_factors.append("⚠️ Suspicious domain extension (.tk, .ml, etc.)")
-        if features['generic_greeting']:
-            risk_factors.append("⚠️ Generic greeting (not personalized)")
+            risk_factors.append("🚨 Threatening language (account suspension/closure)")
         if features['requests_info']:
             risk_factors.append("🚨 Requests personal information")
+        if features['suspicious_domain']:
+            risk_factors.append("🚨 Suspicious domain extension (.tk, .ml, etc.)")
+        if features['has_suspicious_urls']:
+            risk_factors.append("⚠️ Suspicious URL detected")
+        if features['has_urgency']:
+            risk_factors.append("⚠️ Urgency language detected")
+        if features['generic_greeting']:
+            risk_factors.append("⚠️ Generic greeting")
         if features['requests_click']:
             risk_factors.append("⚠️ Requests user to click link")
         if features['has_typos']:
-            risk_factors.append("⚠️ Suspicious character substitution (leetspeak)")
+            risk_factors.append("⚠️ Suspicious character substitution")
         if features['has_money_words']:
             risk_factors.append("⚠️ Money/prize-related content")
         if features['url_count'] > 3:
             risk_factors.append(f"⚠️ Multiple URLs ({features['url_count']})")
-        if features['no_signature']:
-            risk_factors.append("⚠️ Missing professional signature")
         
-        if not risk_factors:
-            risk_factors.append("✓ No obvious red flags detected")
+        if len(risk_factors) == 0 or (len(auth_factors) >= 2 and len(risk_factors) <= 2):
+            risk_factors.append("✓ Low risk - appears legitimate")
         
         return risk_factors
     
@@ -234,6 +274,9 @@ class PhishingAnalyzer:
             }
         
         try:
+            # Extract email authentication headers
+            headers = self.extract_email_headers(email_text)
+            
             # Extract manual features
             features = self.extract_features(email_text)
             
@@ -248,17 +291,26 @@ class PhishingAnalyzer:
             # Model outputs SPAM or HAM (or LABEL_0/LABEL_1)
             is_spam = ml_label.upper() in ["SPAM", "LABEL_1"]
             
-            # Calculate threat score
-            threat_score = self.calculate_threat_score(ml_label, ml_confidence, features)
+            # Calculate threat score WITH email authentication
+            threat_score = self.calculate_threat_score(ml_label, ml_confidence, features, headers)
             
-            # If threat score is high but ML said ham, override
-            if threat_score >= 6.0:
+            # Adjusted threshold: only mark as phishing if score is really high
+            # OR if high-risk features present without authentication
+            high_risk_features = features['requests_info'] or features['has_threats'] or features['suspicious_domain']
+            has_good_auth = headers['has_spf_pass'] and headers['has_dkim_pass']
+            
+            if threat_score >= 7.0:
                 is_phishing = True
+            elif threat_score >= 5.0 and high_risk_features and not has_good_auth:
+                is_phishing = True
+            elif threat_score < 5.0:
+                is_phishing = False
             else:
-                is_phishing = is_spam
+                # Medium score (5-7) with good auth = likely legitimate marketing
+                is_phishing = not has_good_auth
             
-            # Generate risk factors
-            risk_factors = self.generate_risk_factors(features)
+            # Generate risk factors WITH headers
+            risk_factors = self.generate_risk_factors(features, headers)
             
             # Generate reasoning
             reasoning = self.generate_reasoning(is_phishing, threat_score, features, ml_confidence)
@@ -275,7 +327,8 @@ class PhishingAnalyzer:
                 'reasoning': reasoning,
                 'processing_time_ms': processing_time,
                 'ml_label': ml_label,
-                'features': features
+                'features': features,
+                'auth_headers': headers
             }
             
             return result
