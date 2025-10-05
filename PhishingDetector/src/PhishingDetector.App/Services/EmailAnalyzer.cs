@@ -308,57 +308,6 @@ public class EmailAnalyzer
         Console.Error.Write($"{displayName}");
     }
     
-    public async Task<string> GeneratePhishingExample(string brand)
-    {
-        var templates = new[]
-        {
-            $@"Subject: URGENT - {brand} Account Suspended
-
-Dear Customer,
-
-We have detected suspicious activity on your {brand} account.
-Your account has been temporarily suspended for your protection.
-
-Please verify your identity immediately by clicking the link below:
-http://{brand.ToLower()}-secure-verify.tk/login
-
-Failure to verify within 24 hours will result in permanent account closure.
-
-Thank you for your immediate attention to this matter.
-
-{brand} Security Team",
-
-            $@"Subject: {brand} - Unusual Activity Detected
-
-Hello,
-
-We noticed an unusual login attempt to your {brand} account from an unrecognized device.
-
-If this was not you, please secure your account immediately:
-Click here: http://verify-{brand.ToLower()}.ml/secure
-
-This link will expire in 6 hours.
-
-Regards,
-{brand} Trust & Safety",
-
-            $@"Subject: Congratulations! You've won a {brand} gift card!
-
-Dear Lucky Winner,
-
-You have been selected to receive a FREE ${new Random().Next(100, 1000)} {brand} gift card!
-
-Claim your prize now: http://free-{brand.ToLower()}-giftcard.buzz/claim
-
-This offer expires in 24 hours. Act now!
-
-{brand} Promotions Team"
-        };
-        
-        var random = new Random();
-        return templates[random.Next(templates.Length)];
-    }
-    
     private string ExtractEmailBody(string emlContent)
     {
         // Parse EML - keep IMPORTANT headers + body for proper analysis
