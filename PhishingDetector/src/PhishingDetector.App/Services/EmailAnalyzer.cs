@@ -40,7 +40,20 @@ public class EmailAnalyzer
     
     private string FindPythonExecutable()
     {
-        // Try common Python executable names
+        // First, try to find venv Python in ml_backend folder
+        var projectRoot = Path.GetFullPath(Path.Combine(
+            AppDomain.CurrentDomain.BaseDirectory,
+            "..", "..", "..", "..", ".."
+        ));
+        
+        var venvPython = Path.Combine(projectRoot, "ml_backend", "venv", "bin", "python");
+        if (File.Exists(venvPython))
+        {
+            Console.Error.WriteLine($"[INFO] Found venv Python: {venvPython}");
+            return venvPython;
+        }
+        
+        // Try common Python executable names as fallback
         var pythonNames = new[] { "python", "python3", "py" };
         
         foreach (var name in pythonNames)
